@@ -222,7 +222,19 @@
     if (champ) champ.addEventListener('input', filterGallery);
   });
 
-  window.addEventListener('scroll', revealCards);
-  window.addEventListener('resize', revealCards);
-  window.addEventListener('load', revealCards);
+    var revealScheduled = false;
+
+  function scheduleRevealCards() {
+    if (revealScheduled) return;
+
+    revealScheduled = true;
+    window.requestAnimationFrame(function () {
+      revealScheduled = false;
+      revealCards();
+    });
+  }
+
+  window.addEventListener('scroll', scheduleRevealCards, { passive: true });
+  window.addEventListener('resize', scheduleRevealCards);
+  window.addEventListener('load', scheduleRevealCards);
 })();
