@@ -155,38 +155,50 @@
   }
 
   /* Aligne la hauteur des cartes et anime leur arrivée dans le viewport. */
+  
   function revealCards() {
     var cards = UIKit.qsa('.card');
+    var jours = UIKit.qsa('.cal-day');
+    var hauteurFenetre = window.innerHeight;
+    var rectsCartes = [];
+    var rectsJours = [];
+    var tallest = 0;
 
+    // Lire les dimensions des cartes avant de modifier leurs styles.
     for (var i = 0; i < cards.length; i++) {
-      var rect = cards[i].getBoundingClientRect();
+      rectsCartes.push(cards[i].getBoundingClientRect());
+      tallest = Math.max(tallest, cards[i].offsetHeight);
+    }
 
-      // Hauteur de la plus grande carte, pour garder une grille régulière.
-      var tallest = 0;
-      var all = UIKit.qsa('.card');
-      for (var j = 0; j < all.length; j++) {
-        if (all[j].offsetHeight > tallest) {
-          tallest = all[j].offsetHeight;
-        }
-      }
-      cards[i].style.minHeight = tallest + 'px';
+    // Lire les dimensions des cases du calendrier.
+    for (var j = 0; j < jours.length; j++) {
+      rectsJours.push(jours[j].getBoundingClientRect());
+    }
 
-      if (rect.top < window.innerHeight - 40) {
-        UIKit.cls(cards[i], 'visible', true);
-        cards[i].style.transform = 'translateY(0px)';
+    // Appliquer ensuite les modifications de styles.
+    for (var k = 0; k < cards.length; k++) {
+      cards[k].style.minHeight = tallest + 'px';
+
+      if (rectsCartes[k].top < hauteurFenetre - 40) {
+        UIKit.cls(cards[k], 'visible', true);
+        cards[k].style.transform = 'translateY(0px)';
       } else {
-        cards[i].style.transform = 'translateY(24px)';
+        cards[k].style.transform = 'translateY(24px)';
       }
     }
 
-    // Les cases du calendrier apparaissent progressivement à l'approche.
-    var jours = UIKit.qsa('.cal-day');
-    for (var k = 0; k < jours.length; k++) {
-      var box = jours[k].getBoundingClientRect();
-      var d = Math.abs(box.top - window.innerHeight / 2);
-      jours[k].style.opacity = Math.max(0.15, 1 - d / window.innerHeight);
+    for (var m = 0; m < jours.length; m++) {
+      var distance = Math.abs(
+        rectsJours[m].top - hauteurFenetre / 2
+      );
+
+      jours[m].style.opacity = Math.max(
+        0.15,
+        1 - distance / hauteurFenetre
+      );
     }
   }
+
 
   /* Affiche les images une fois chargées. */
   function watchImages() {
