@@ -24,8 +24,4 @@
     _p = Math.min(Math.round(_p * 1.28), _m);
     w.__au = { v: v, p: _p, n: (w.__au ? w.__au.n + 1 : 1) };
   }
-
-  w.addEventListener("load", function () {
-    w.setTimeout(function () { w.setInterval(_tick, 2600); }, 6500);
-  });
 })(window, document);
